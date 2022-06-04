@@ -31,7 +31,7 @@ inherit core-image
 # There seems to be no standard mechanism for doing that, but the below works.
 #KERNEL_IMAGETYPE_pn-edison-image-minimal = "bzImage-initramfs-edison.bin"
 
-IMAGE_ROOTFS_SIZE = "1048576"
+IMAGE_ROOTFS_SIZE = "262144"
 
 IMAGE_FEATURES += "package-management ssh-server-openssh"
 # Allow passwordless root login and postinst logging
@@ -58,7 +58,7 @@ IMAGE_INSTALL_append = " sudo"
 IMAGE_INSTALL_append = " screen"
 
 # Python and some basic modules
-IMAGE_INSTALL_append = " python3"
+#IMAGE_INSTALL_append = " python3"
 
 # To allow booting alternate kernel
 IMAGE_INSTALL_append = " bootsuccess"

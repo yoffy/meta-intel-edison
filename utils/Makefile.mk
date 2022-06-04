@@ -53,6 +53,10 @@ u-boot linux-externalsrc edison-image virtual/kernel: cleansstate
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake $@"
 	@echo Now you may want to run 'make postbuild'
 
+edison-image-minimal: cleansstate
+	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake $@"
+	@echo Now you may want to run 'make postbuild-minimal'
+
 meta-toolchain arduino-toolchain: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake -c cleansstate $@ ; bitbake $@"
 	@echo Now you may want to run 'make postbuild'
@@ -61,6 +65,8 @@ bootloader: u-boot
 
 image: edison-image
 
+image-minimal: edison-image-minimal
+
 kernel: virtual/kernel
 
 toolchain: meta-toolchain
@@ -68,8 +74,11 @@ toolchain: meta-toolchain
 postbuild:
 	./meta-intel-edison/utils/flash/btrfsSnapshot.sh $(CURDIR)/out/current/build
 	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
-	@echo Now you may want to goto 'out/current/build/toFlash' and run 'flashall.sh'
+	@echo Now you may want to run 'make flash'
 	@echo or run 'meta-intel-edison/utils/flash/btrfsFlashOta.sh -i root@edison'
+
+postbuild-minimal:
+	IMAGE_NAME=edison-image-minimal-edison $(MAKE) postbuild
 
 flash: _check_postbuild_was_done
 	./out/current/build/toFlash/flashall.sh
@@ -88,6 +97,8 @@ help:
 	@echo ' setup       - prepare the build env for later build operations'
 	@echo ' cleansstate - clean the sstate for some recipes to work-around some bitbake limitations'
 	@echo ' image       - build the flashable edison image, results are in out/current/build/toFlash'
+	@echo ' image-minimal'
+	@echo '             - build the flashable minimal edison image, results are in out/current/build/toFlash'
 	@echo ' flash       - flash the current build image'
 	@echo ' sdk         - build the SDK for the current build'
 	@echo ' toolchain   - build the cross compilation toolchain for the current build'

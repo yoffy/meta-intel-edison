@@ -3,6 +3,10 @@ require edison-image-minimal.bb
 DESCRIPTION = "A fully functional image to run EDISON"
 #KERNEL_IMAGETYPE_pn-edison-image = "bzImage-initramfs-edison.bin"
 
+IMAGE_ROOTFS_SIZE = "1048576"
+
+
+IMAGE_INSTALL_append = " python3"
 
 IMAGE_INSTALL_append = " connman"
 IMAGE_INSTALL_append = " connman-client"
