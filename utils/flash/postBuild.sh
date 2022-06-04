@@ -2,6 +2,7 @@
 
 # On ubuntu you need to install libqt4-core:i386 and libqt4-gui:i386 to run this script
 
+image_name="${IMAGE_NAME:-edison-image-edison}"
 top_repo_dir=$(dirname $(dirname $(dirname $(dirname $(readlink -f $0)))))
 
 build_dir=""
@@ -27,21 +28,21 @@ else
 fi
 
 # Get edison rootfs image size
-IMAGE_SIZE_MB=$((`stat --printf="%s" -L $build_dir/tmp/deploy/images/edison/edison-image-edison.ext4` / 1048576))
+IMAGE_SIZE_MB=$((`stat --printf="%s" -L $build_dir/tmp/deploy/images/edison/${image_name}.ext4` / 1048576))
 
 echo "EDISON_ROOTFS_MB = $EDISON_ROOTFS_MB, IMAGE_SIZE_MB = $IMAGE_SIZE_MB"
 
 # Compare rootfs partition settings with rootfs image
 if [ $EDISON_ROOTFS_MB -lt $IMAGE_SIZE_MB ]
 then
-        echo -e "\033[31mError: image edison-image-edison.ext4(${IMAGE_SIZE_MB}MB) has exceeded rootfs partition settings(${EDISON_ROOTFS_MB}MB)!\033[0m"
+        echo -e "\033[31mError: image ${image_name}.ext4(${IMAGE_SIZE_MB}MB) has exceeded rootfs partition settings(${EDISON_ROOTFS_MB}MB)!\033[0m"
         echo -e "\033[33mNeed to enlarge rootfs partition size, otherwise it will cause edison board bootup fail!\033[0m"
         echo -e "\033[33mYou can change it $env_dir/edison.env directly.\033[0m "
         exit 1
 fi
 
 # Copy boot partition (contains kernel and ramdisk)
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.hddimg $build_dir/toFlash/
+cp $build_dir/tmp/deploy/images/edison/${image_name}.hddimg $build_dir/toFlash/edison-image-edison.hddimg
 
 # Copy u-boot
 cp $build_dir/tmp/deploy/images/edison/u-boot-edison.img $build_dir/toFlash/
@@ -62,8 +63,8 @@ do
 done
 
 # Copy rootfs
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.ext4 $build_dir/toFlash/
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.btrfs $build_dir/toFlash/
+cp $build_dir/tmp/deploy/images/edison/${image_name}.ext4 $build_dir/toFlash/edison-image-edison.ext4
+cp $build_dir/tmp/deploy/images/edison/${image_name}.btrfs $build_dir/toFlash/edison-image-edison.btrfs
 
 # Copy flashing script
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
@@ -79,7 +80,10 @@ if [ -a $ubootdir ]; then
     mkimage_tool_path=$(find $top_repo_dir/u-boot -name mkimage -type f)
 fi
 if [ -z $mkimage_tool_path ]; then
-    mkimage_tool_path=$(find $build_dir/tmp/work/edison-poky-linux/u-boot -name mkimage -type f)
+    mkimage_tool_path=$(find $build_dir/tmp/work/edison-poky-linux/u-boot -name mkimage -type f 2>/dev/null)
+    if [ -z "$mkimage_tool_path" ]; then
+        mkimage_tool_path=$(find $build_dir/tmp/work/edison-poky-linux-gnux32/u-boot -name mkimage -type f 2>/dev/null)
+    fi
     if [ -z "$mkimage_tool_path" ]; then
         echo "Error : ota_update.scr creation failed, mkimage tool not found"
         exit 0
@@ -104,7 +108,7 @@ $mkimage_tool_path -a 0x10000 -T script -C none -n 'Edison Updater script' -d $b
 rm $build_dir/toFlash/ota_update.cmd
 
 # Generates a formatted list of all packages included in the image
-awk '{print $1 " " $3}' $build_dir/tmp/deploy/images/edison/edison-image-edison.manifest > $build_dir/toFlash/package-list.txt
+awk '{print $1 " " $3}' $build_dir/tmp/deploy/images/edison/${image_name}.manifest > $build_dir/toFlash/package-list.txt
 
 echo "**** Done ***"
 echo "Files ready to flash in $build_dir/toFlash/"

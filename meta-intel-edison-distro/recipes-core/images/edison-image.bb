@@ -4,12 +4,14 @@ DESCRIPTION = "A fully functional image to run EDISON"
 #KERNEL_IMAGETYPE_pn-edison-image = "bzImage-initramfs-edison.bin"
 LICENSE = "MIT"
 
+IMAGE_ROOTFS_SIZE = "1048576"
+
+IMAGE_INSTALL:append = " python3"
 IMAGE_INSTALL:append = " connman"
 IMAGE_INSTALL:append = " connman-client"
 IMAGE_INSTALL:append = " connman-tools"
 IMAGE_INSTALL:append = " connman-plugin-vpn-openvpn"
 IMAGE_INSTALL:append = " openvpn"
-
 IMAGE_INSTALL:append = " ap-mode-toggle"
 IMAGE_INSTALL:append = " ethtool"
 IMAGE_INSTALL:append = " pwr-button-handler"
