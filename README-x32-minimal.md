@@ -19,6 +19,12 @@ $ make postbuild-minimal
 $ sudo make flash
 ```
 
+## Expand root filesystem
+
+```
+$ resize2fs /dev/mmcblk0p8
+```
+
 ## Setup WiFi
 
 Create WiFi settings that ssid and password:
