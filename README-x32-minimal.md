@@ -6,6 +6,14 @@ x32 ABI is better performance than i386 ABI and smaller memory footprint than x8
 
 See: https://en.wikipedia.org/wiki/X32_ABI
 
+## Prepare tools
+
+In Ubuntu 20.04:
+
+```
+$ sudo apt install diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping libsdl1.2-dev xterm btrfs-progs p7zip-full dfu-util
+```
+
 ## Build and flash minimal image
 
 ```

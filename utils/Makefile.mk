@@ -71,6 +71,9 @@ kernel: virtual/kernel
 
 toolchain: meta-toolchain
 
+perf: _check_setup_was_done
+	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake $@"
+
 postbuild:
 	./meta-intel-edison/utils/flash/btrfsSnapshot.sh $(CURDIR)/out/current/build
 	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
