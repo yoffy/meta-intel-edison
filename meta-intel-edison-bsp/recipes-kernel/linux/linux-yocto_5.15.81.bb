@@ -88,3 +88,6 @@ LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 LINUX_VERSION ?= "${PV}"
 
 COMPATIBLE_MACHINE = "edison"
+
+# This one is necessary too - otherwise the compilation itself fails later.
+DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
